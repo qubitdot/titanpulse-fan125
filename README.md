@@ -473,4 +473,4 @@ See the [LICENSE](LICENSE) file for the complete license text.
 
 <br>
 
-made with ♥️ in 🇧🇷.
+made with ♥️ in Bazil.
