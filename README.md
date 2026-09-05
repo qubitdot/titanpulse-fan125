@@ -21,37 +21,36 @@
 
 <br>
 
+<details>
+<summary><strong>Navigation</strong></summary>
+
 - [Objective](#objective)
 - [Hardware](#hardware)
 - [Arduino Pinout](#arduino-pinout)
-
-- **Signal Interface**
+- Signal Interface
   - [Motorcycle Signal Input](#motorcycle-signal-input)
   - [Dashboard Output](#dashboard-output)
-
-- **RPM Calculation**
+- RPM Calculation
   - [How RPM Is Calculated](#how-rpm-is-calculated)
   - [Why Is There a Calibration Table?](#why-is-there-a-calibration-table)
-
-- **Calibration**
+- Calibration
   - [Calibration Table](#calibration-table)
   - [How to Calibrate](#how-to-calibrate)
   - [Table Structure](#table-structure)
   - [Changing the Calibration](#changing-the-calibration)
   - [Auditability](#auditability)
-
-- **Testing & Diagnostics**
+- Testing & Diagnostics
   - [Serial Monitor](#serial-monitor)
   - [Recommended Calibration Procedure](#recommended-calibration-procedure)
   - [Example](#example)
-
-- **Installation**
+- Installation
   - [Compilation](#compilation)
-
 - [Safety](#safety)
 - [Known Limitations](#known-limitations)
 - [Project Status](#project-status)
 - [License](#license)
+
+</details>
 
 <br>
 
@@ -59,17 +58,17 @@ The project works as a signal converter:
 
     Motorcycle ignition signal
                 ↓
-           Arduino Nano
+          Arduino Nano
                 ↓
-             RPM calculation
+         RPM calculation
                 ↓
-          Calibration table
+        Calibration table
                 ↓
-         Specific frequency
+       Specific frequency
                 ↓
-          Dashboard RPM input
+        Dashboard RPM input
                 ↓
-             RPM indicator
+           RPM indicator
 
 
 ## Objective
