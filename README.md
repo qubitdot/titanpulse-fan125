@@ -1,6 +1,6 @@
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="assets/logo-light.png">
-  <source media="(prefers-color-scheme: light)" srcset="assets/logo-dark.png">
+  <source media="(prefers-color-scheme: dark)" srcset="assets/light-logo.png">
+  <source media="(prefers-color-scheme: light)" srcset="assets/dark-logo.png">
   <img alt="Logo do projeto" src="assets/logo-dark.svg" width="180">
 </picture>
 
