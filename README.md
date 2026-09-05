@@ -1,3 +1,9 @@
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/logo-light.svg">
+  <source media="(prefers-color-scheme: light)" srcset="assets/logo-dark.svg">
+  <img alt="Logo do projeto" src="assets/logo-dark.svg" width="180">
+</picture>
+
 # Honda Fan 125 (2018) with Titan Blackout Tachometer
 
 Sistema de tacômetro experimental baseado em Arduino Nano para adicionar leitura de RPM a uma Honda Fan 125 2018 utilizando um painel Titan 2023 Blackout aftermarket.
