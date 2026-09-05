@@ -10,7 +10,7 @@
     >
     <img
       src="assets/light-logo.png"
-      alt="Honda Fan 125 Titan Tachometer"
+      alt="TitanPulse"
       width="220"
     >
   </picture>
@@ -19,163 +19,197 @@
 # TitanPulse
 ### Arduino-based tachometer signal system for Honda Fan 125 (2018) using the Titan Blackout dashboard.
 
-Sistema de tacômetro experimental baseado em Arduino Nano para adicionar leitura de RPM a uma Honda Fan 125 2018 utilizando um painel Titan 2023 Blackout aftermarket.
+<br>
 
-O projeto funciona como um conversor de sinal:
+- [Objective](#objective)
+- [Hardware](#hardware)
+- [Arduino Pinout](#arduino-pinout)
 
-    Sinal de ignição da motocicleta
+- **Signal Interface**
+  - [Motorcycle Signal Input](#motorcycle-signal-input)
+  - [Dashboard Output](#dashboard-output)
+
+- **RPM Calculation**
+  - [How RPM Is Calculated](#how-rpm-is-calculated)
+  - [Why Is There a Calibration Table?](#why-is-there-a-calibration-table)
+
+- **Calibration**
+  - [Calibration Table](#calibration-table)
+  - [How to Calibrate](#how-to-calibrate)
+  - [Table Structure](#table-structure)
+  - [Changing the Calibration](#changing-the-calibration)
+  - [Auditability](#auditability)
+
+- **Testing & Diagnostics**
+  - [Serial Monitor](#serial-monitor)
+  - [Recommended Calibration Procedure](#recommended-calibration-procedure)
+  - [Example](#example)
+
+- **Installation**
+  - [Compilation](#compilation)
+
+- [Safety](#safety)
+- [Known Limitations](#known-limitations)
+- [Project Status](#project-status)
+- [License](#license)
+
+<br>
+
+The project works as a signal converter:
+
+    Motorcycle ignition signal
                 ↓
-          Arduino Nano
+           Arduino Nano
                 ↓
-          Cálculo de RPM
+             RPM calculation
                 ↓
-       Tabela de calibração
+          Calibration table
                 ↓
-       Frequência específica
+         Specific frequency
                 ↓
-       Entrada RPM do painel
+          Dashboard RPM input
                 ↓
-          Indicador de RPM
+             RPM indicator
 
 
-## Objetivo
+## Objective
 
-A Honda Fan 125 2018 utilizada neste projeto não possui um tacômetro original.
+The 2018 Honda Fan 125 used in this project does not have a factory tachometer.
 
-O objetivo é utilizar o sinal proveniente do sistema de ignição para calcular a rotação do motor e gerar um sinal compatível com a entrada de RPM de um painel Titan 2023 Blackout aftermarket.
+The objective is to use the signal from the ignition system to calculate engine speed and generate a signal compatible with the RPM input of an aftermarket 2023 Titan Blackout dashboard.
 
-O painel não apresentou uma relação linear simples entre frequência de entrada e RPM indicado. Por isso, o projeto utiliza uma tabela de calibração experimental.
+The dashboard did not show a simple linear relationship between input frequency and indicated RPM. Therefore, the project uses an experimental calibration table.
 
-O Arduino não tenta reproduzir matematicamente o funcionamento interno do painel.
+The Arduino does not attempt to mathematically reproduce the dashboard's internal operation.
 
-Em vez disso, ele responde:
+Instead, it answers:
 
-> "Quando o motor estiver nesta faixa de RPM, qual frequência faz este painel indicar corretamente essa faixa?"
+"When the engine is within this RPM range, what frequency makes this dashboard display that range correctly?"
 
-Essa abordagem transforma o painel em uma caixa-preta que pode ser calibrada empiricamente.
+This approach treats the dashboard as a black box that can be calibrated empirically.
 
 
 ## Hardware
 
-### Motocicleta
+### Motorcycle
 
 - Honda Fan 125 2018
 
-### Painel
+### Dashboard
 
-- Titan 2023 Blackout aftermarket
+- Aftermarket Titan 2023 Blackout
 
-### Microcontrolador
+### Microcontroller
 
 - Arduino Nano
 - ATmega328P
 
-### Componentes utilizados
+### Components used
 
 - Arduino Nano
-- Resistor de 10 kΩ
-- Fios de cobre
-- Multímetro
+- 10 kΩ resistor
+- Copper wires
+- Multimeter
 
-A instalação definitiva deve utilizar conexões soldadas e devidamente isoladas.
+The final installation should use soldered and properly insulated connections.
 
 
-## Pinagem do Arduino
+## Arduino Pinout
 
-| Arduino Nano | Função |
+| Arduino Nano | Function |
 |---|---|
-| D2 | Entrada do sinal da motocicleta |
-| D9 | Saída de frequência para o painel |
-| GND | Terra comum |
+| D2 | Motorcycle signal input |
+| D9 | Frequency output to dashboard |
+| GND | Common ground |
 
-O D2 utiliza interrupção externa para detectar as transições do sinal.
+D2 uses an external interrupt to detect signal transitions.
 
-O D9 utiliza o Timer1 do ATmega328P para gerar a frequência de saída.
+D9 uses the ATmega328P Timer1 to generate the output frequency.
 
 
-## Entrada do sinal da motocicleta
+## Motorcycle Signal Input
 
-O sinal utilizado neste projeto é o fio azul/amarelo associado ao pulso de ignição da motocicleta.
+The signal used in this project is the blue/yellow wire associated with the motorcycle's ignition pulse.
 
-O sinal é conectado ao D2 através de um resistor de 10 kΩ.
+The signal is connected to D2 through a 10 kΩ resistor.
 
-Esquema simplificado:
+Simplified diagram:
 
-    Sinal azul/amarelo
+    Blue/yellow signal
            |
           10 kΩ
            |
            +-------- D2 Arduino Nano
-           
-    GND da motocicleta
+
+    Motorcycle GND
            |
            +-------- GND Arduino Nano
 
 
-## Saída para o painel
+## Dashboard Output
 
-O D9 é conectado à entrada de RPM do painel.
+D9 is connected to the dashboard's RPM input.
 
     Arduino D9
         |
-        +-------- Entrada RPM do painel
+        +-------- Dashboard RPM input
 
-O GND do Arduino e o GND do painel devem possuir referência comum.
+The Arduino GND and dashboard GND must share a common reference.
 
 
-## Como o RPM é calculado
+## How RPM Is Calculated
 
-Durante os testes foi observado que o Arduino detecta aproximadamente 9,2 eventos de pulso por volta do motor.
+During testing, it was observed that the Arduino detects approximately 9.2 pulse events per engine revolution.
 
-O código utiliza:
+The code uses:
 
     PULSOS_POR_VOLTA = 9.2
 
-A cada intervalo de medição, o Arduino calcula a quantidade de pulsos por segundo e converte para RPM:
+At each measurement interval, the Arduino calculates the number of pulses per second and converts it to RPM:
 
     RPM = (pulsos_por_segundo × 60) / pulsos_por_volta
 
-A leitura é posteriormente filtrada para reduzir oscilações.
+The reading is subsequently filtered to reduce fluctuations.
 
 
-## Por que existe uma tabela de calibração?
+## Why Is There a Calibration Table?
 
-O comportamento do painel não é linear.
+The dashboard's behavior is not linear.
 
-Durante os testes, algumas frequências produziram aproximadamente:
+During testing, some frequencies produced approximately:
 
-| Frequência | RPM indicado pelo painel |
+| Frequency | RPM indicated by dashboard |
 |---:|---:|
-| 8,0 Hz | ~2800 RPM |
-| 8,2 Hz | ~4000 RPM |
-| 8,4 Hz | ~6800 RPM |
-| 8,6 Hz | ~11000+ RPM |
-| 8,8 Hz | ~1800 RPM |
-| 9,0 Hz | ~2300 RPM |
-| 9,1 Hz | ~2500 RPM |
-| 9,2 Hz | ~2800 RPM |
-| 9,3 Hz | ~3000 RPM |
-| 9,4 Hz | ~3500 RPM |
-| 9,5 Hz | ~4200 RPM |
-| 9,6 Hz | ~5000 RPM |
-| 9,7 Hz | ~6000 RPM |
-| 9,8 Hz | ~7800 RPM |
-| 9,9 Hz | ~10500 RPM |
-| 10,0 Hz | ~11000+ RPM |
+| 8.0 Hz | ~2800 RPM |
+| 8.2 Hz | ~4000 RPM |
+| 8.4 Hz | ~6800 RPM |
+| 8.6 Hz | ~11000+ RPM |
+| 8.8 Hz | ~1800 RPM |
+| 9.0 Hz | ~2300 RPM |
+| 9.1 Hz | ~2500 RPM |
+| 9.2 Hz | ~2800 RPM |
+| 9.3 Hz | ~3000 RPM |
+| 9.4 Hz | ~3500 RPM |
+| 9.5 Hz | ~4200 RPM |
+| 9.6 Hz | ~5000 RPM |
+| 9.7 Hz | ~6000 RPM |
+| 9.8 Hz | ~7800 RPM |
+| 9.9 Hz | ~10500 RPM |
+| 10.0 Hz | ~11000+ RPM |
 | 25 Hz | ~4000 RPM |
 
-Esses resultados demonstram que não é seguro assumir uma fórmula simples do tipo:
+These results demonstrate that it is not safe to assume a simple formula such as:
 
-    frequência = RPM / constante
+    frequency = RPM / constant
 
-Portanto, o projeto utiliza uma tabela de calibração.
+Therefore, the project uses a calibration table.
 
 
-## Tabela de calibração
+## Calibration Table
 
-A tabela possui 44 posições.
+The table contains 44 positions.
 
-Cada posição representa uma faixa de 250 RPM:
+Each position represents a 250 RPM range:
 
     [00] 250–499 RPM
     [01] 500–749 RPM
@@ -183,75 +217,75 @@ Cada posição representa uma faixa de 250 RPM:
     ...
     [43] 11000+ RPM
 
-No código:
+In the code:
 
     const float frequencias[44] = {
         ...
     };
 
-Cada posição contém a frequência que deve ser enviada ao painel naquela faixa.
+Each position contains the frequency that should be sent to the dashboard for that RPM range.
 
 
-## Como calibrar
+## How to Calibrate
 
-A calibração é feita com o motor desligado.
+Calibration is performed with the engine turned off.
 
-O Arduino pode ser utilizado para enviar uma frequência fixa ao painel.
+The Arduino can be used to send a fixed frequency to the dashboard.
 
-Para cada frequência testada, deve-se observar o RPM indicado pelo painel.
+For each frequency tested, observe the RPM indicated by the dashboard.
 
-Por exemplo:
+For example:
 
-    8,20 Hz → painel indica aproximadamente 4000 RPM
+    8.20 Hz → dashboard indicates approximately 4000 RPM
 
-Se o objetivo for fazer a faixa:
+If the goal is for the range:
 
     4000–4249 RPM
 
-ser indicada como 4000 RPM pelo painel, a posição correspondente na tabela deve receber:
+to be displayed as 4000 RPM by the dashboard, the corresponding table position should contain:
 
-    8,20
+    8.20
 
-Assim, quando o Arduino detectar um RPM entre 4000 e 4249, ele enviará 8,20 Hz.
+Then, when the Arduino detects an RPM between 4000 and 4249, it will send 8.20 Hz.
 
-O processo é repetido para cada faixa.
+The process is repeated for each range.
 
 
-## Estrutura da tabela
+## Table Structure
 
-A tabela segue esta lógica:
+The table follows this logic:
 
-    RPM detectado
+    Detected RPM
           ↓
     (RPM - 250) / 250
           ↓
-    índice da tabela
+       table index
           ↓
-    frequência correspondente
+    corresponding frequency
           ↓
-    painel
+       dashboard
 
 
-Por exemplo:
+For example:
 
     4000 RPM
         ↓
-    índice 15
+     index 15
         ↓
     frequencias[15]
         ↓
-    frequência configurada para 4000–4249 RPM
+    frequency configured for 4000–4249 RPM
 
 
-## Alterando a calibração
+## Changing the Calibration
 
-A única parte que normalmente precisa ser alterada durante a calibração é:
+The only part that normally needs to be changed during calibration is:
 
     const float frequencias[44]
 
-Os valores podem ser completamente não lineares.
+The values can be completely non-linear.
 
-Por exemplo:
+For example:
 
     const float frequencias[44] = {
         8.20,
@@ -264,68 +298,68 @@ Por exemplo:
         ...
     };
 
-Não existe necessidade de os valores aumentarem de maneira uniforme.
+There is no requirement for the values to increase uniformly.
 
-O objetivo da tabela é reproduzir empiricamente a resposta do painel.
+The purpose of the table is to empirically reproduce the dashboard's response.
 
 
-## Auditoria
+## Auditability
 
-O projeto foi desenvolvido para que a calibração possa ser auditada diretamente no código.
+The project was designed so that the calibration can be audited directly in the code.
 
-Cada entrada da tabela possui um comentário indicando sua faixa de RPM:
+Each table entry includes a comment indicating its RPM range:
 
     8.200,   // [15] 4000 - 4249
 
-Dessa maneira é possível verificar visualmente:
+This makes it possible to visually verify:
 
-1. Qual faixa de RPM está sendo considerada.
-2. Qual índice da tabela representa essa faixa.
-3. Qual frequência será enviada ao painel.
-4. Alterar individualmente qualquer frequência sem modificar a lógica do programa.
+1. Which RPM range is being considered.
+2. Which table index represents that range.
+3. Which frequency will be sent to the dashboard.
+4. Change any individual frequency without modifying the program logic.
 
 
-## Monitor Serial
+## Serial Monitor
 
-O Arduino envia informações pelo Serial Monitor a 115200 baud.
+The Arduino sends information through the Serial Monitor at 115200 baud.
 
-Exemplo:
+Example:
 
     RPM REAL: 4032 | QUADRADO: 15 | Hz ENVIADO: 8.200
 
-Isso permite verificar simultaneamente:
+This makes it possible to simultaneously verify:
 
-- RPM calculado pelo Arduino;
-- índice da faixa utilizada;
-- frequência enviada ao painel.
-
-
-## Procedimento recomendado de calibração
-
-Para cada faixa:
-
-1. Determinar a frequência que faz o painel indicar o RPM desejado.
-2. Deixar o painel estabilizar.
-3. Repetir o teste para confirmar que a leitura não é apenas um pico momentâneo.
-4. Registrar a frequência encontrada.
-5. Colocar o valor na posição correspondente da tabela.
-6. Testar novamente com o motor funcionando.
-7. Ajustar somente aquela posição se necessário.
-
-Recomenda-se registrar os resultados externamente durante os testes antes de alterar a tabela definitiva.
+- RPM calculated by the Arduino;
+- index of the selected range;
+- frequency sent to the dashboard.
 
 
-## Exemplo
+## Recommended Calibration Procedure
 
-Suponha que os testes produzam:
+For each range:
 
-    8,17 Hz → 3000 RPM
-    8,21 Hz → 3250 RPM
-    8,26 Hz → 3500 RPM
-    8,34 Hz → 3750 RPM
-    8,20 Hz → 4000 RPM
+1. Determine the frequency that makes the dashboard display the desired RPM.
+2. Allow the dashboard reading to stabilize.
+3. Repeat the test to confirm that the reading is not just a momentary spike.
+4. Record the frequency found.
+5. Enter the value in the corresponding table position.
+6. Test again with the engine running.
+7. Adjust only that position if necessary.
 
-A tabela pode conter:
+It is recommended to record the results externally during testing before modifying the final calibration table.
+
+
+## Example
+
+Suppose testing produces:
+
+    8.17 Hz → 3000 RPM
+    8.21 Hz → 3250 RPM
+    8.26 Hz → 3500 RPM
+    8.34 Hz → 3750 RPM
+    8.20 Hz → 4000 RPM
+
+The table may contain:
 
     8.17,   // 3000
     8.21,   // 3250
@@ -333,16 +367,16 @@ A tabela pode conter:
     8.34,   // 3750
     8.20,   // 4000
 
-A ordem não precisa ser crescente.
+The order does not need to be ascending.
 
-Se 4000 RPM exigir uma frequência menor que 3750 RPM, isso é aceitável. O painel é tratado como uma caixa-preta e a tabela reproduz seu comportamento observado.
+If 4000 RPM requires a lower frequency than 3750 RPM, that is acceptable. The dashboard is treated as a black box, and the table reproduces its observed behavior.
 
 
-## Compilação
+## Compilation
 
-O projeto foi desenvolvido para Arduino Nano baseado no ATmega328P.
+The project was developed for an Arduino Nano based on the ATmega328P.
 
-No Arduino IDE:
+In the Arduino IDE:
 
     Board:
     Arduino Nano
@@ -350,42 +384,42 @@ No Arduino IDE:
     Processor:
     ATmega328P
 
-Caso seja utilizado um Nano com outro bootloader, selecione a opção correspondente no Arduino IDE.
+If a Nano with a different bootloader is used, select the corresponding option in the Arduino IDE.
 
 
-## Instalação
+## Installation
 
-1. Conecte o sinal da motocicleta ao D2 através do resistor de 10 kΩ.
-2. Conecte o GND da motocicleta ao GND do Arduino.
-3. Conecte o D9 à entrada de RPM do painel.
-4. Faça upload do firmware.
-5. Abra o Serial Monitor em 115200 baud.
-6. Verifique se o Arduino está detectando RPM.
-7. Verifique a frequência que está sendo enviada.
-8. Faça a calibração da tabela.
-9. Após a calibração, faça os testes com o motor funcionando.
-
-
-## Segurança
-
-Este projeto trabalha diretamente com sinais elétricos de uma motocicleta.
-
-O circuito apresentado é experimental e não deve ser considerado uma interface automotiva profissional.
-
-O sinal de entrada deve ser devidamente condicionado antes de uma instalação permanente caso sejam observadas tensões ou transientes fora das especificações do ATmega328P.
-
-Nunca conecte diretamente ao Arduino um sinal que possa exceder os limites elétricos do microcontrolador.
-
-Todas as conexões devem ser isoladas e mecanicamente protegidas contra vibração, umidade e curto-circuito.
+1. Connect the motorcycle signal to D2 through the 10 kΩ resistor.
+2. Connect the motorcycle GND to the Arduino GND.
+3. Connect D9 to the dashboard RPM input.
+4. Upload the firmware.
+5. Open the Serial Monitor at 115200 baud.
+6. Verify that the Arduino is detecting RPM.
+7. Verify the frequency being sent.
+8. Calibrate the table.
+9. After calibration, test with the engine running.
 
 
-## Limitações conhecidas
+## Safety
 
-O projeto depende do comportamento específico do painel Titan 2023 Blackout utilizado nos testes.
+This project works directly with electrical signals from a motorcycle.
 
-Outro painel pode utilizar uma entrada de RPM diferente e exigir outra calibração.
+The circuit presented here is experimental and should not be considered a professional automotive interface.
 
-A tabela de frequências também é específica para a combinação:
+The input signal must be properly conditioned before permanent installation if voltages or transients outside the ATmega328P specifications are observed.
+
+Never connect a signal directly to the Arduino if it may exceed the microcontroller's electrical limits.
+
+All connections must be insulated and mechanically protected against vibration, moisture, and short circuits.
+
+
+## Known Limitations
+
+The project depends on the specific behavior of the Titan 2023 Blackout dashboard used during testing.
+
+Another dashboard may use a different RPM input and require different calibration.
+
+The frequency table is also specific to the combination of:
 
     Honda Fan 125 2018
     +
@@ -394,19 +428,19 @@ A tabela de frequências também é específica para a combinação:
     Arduino Nano
 
 
-Portanto, os valores da tabela não devem ser considerados uma especificação universal.
+Therefore, the table values should not be considered a universal specification.
 
 
-## Estado do projeto
+## Project Status
 
-O firmware está funcional como protótipo, mas não utilizável na prática.
+The firmware is functional as a prototype, but not ready for practical use.
 
-A arquitetura de leitura, cálculo de RPM, seleção da faixa e geração do sinal está implementada.
+The architecture for signal reading, RPM calculation, range selection, and signal generation has been implemented.
 
-A tabela de frequência é deliberadamente editável e deve ser calibrada experimentalmente para obter a melhor correspondência possível entre o RPM real do motor e a indicação do painel.
+The frequency table is deliberately editable and must be calibrated experimentally to achieve the best possible correspondence between the engine's actual RPM and the dashboard's displayed RPM.
 
 
-## Licença
+## License
 
 This project is licensed under the MIT License.
 
