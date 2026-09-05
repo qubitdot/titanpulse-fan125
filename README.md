@@ -2,14 +2,14 @@
   <picture>
     <source
       media="(prefers-color-scheme: dark)"
-      srcset="assets/logo-for-dark.svg"
+      srcset="assets/dark-logo.png"
     >
     <source
       media="(prefers-color-scheme: light)"
-      srcset="assets/logo-for-light.svg"
+      srcset="assets/light-logo.png"
     >
     <img
-      src="assets/logo-for-light.svg"
+      src="assets/light-logo.png"
       alt="Honda Fan 125 Titan Tachometer"
       width="220"
     >
