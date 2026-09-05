@@ -1,8 +1,20 @@
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="assets/light-logo.png">
-  <source media="(prefers-color-scheme: light)" srcset="assets/dark-logo.png">
-  <img alt="Logo do projeto" src="assets/logo-dark.svg" width="180">
-</picture>
+<p align="center">
+  <picture>
+    <source
+      media="(prefers-color-scheme: dark)"
+      srcset="assets/logo-for-dark.svg"
+    >
+    <source
+      media="(prefers-color-scheme: light)"
+      srcset="assets/logo-for-light.svg"
+    >
+    <img
+      src="assets/logo-for-light.svg"
+      alt="Honda Fan 125 Titan Tachometer"
+      width="220"
+    >
+  </picture>
+</p>
 
 # Honda Fan 125 (2018) with Titan Blackout Tachometer
 
