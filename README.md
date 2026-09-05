@@ -56,20 +56,15 @@
 
 The project works as a signal converter:
 
-    Motorcycle ignition signal
-                ↓
-          Arduino Nano
-                ↓
-         RPM calculation
-                ↓
-        Calibration table
-                ↓
-       Specific frequency
-                ↓
-        Dashboard RPM input
-                ↓
-           RPM indicator
-
+```mermaid
+flowchart LR
+    A[Motorcycle Ignition Signal] --> B[Arduino Nano]
+    B --> C[RPM Calculation]
+    C --> D[Calibration Table]
+    D --> E[Frequency Output]
+    E --> F[Titan Blackout Dashboard]
+    F --> G[RPM Indicator]
+```
 
 ## Objective
 
