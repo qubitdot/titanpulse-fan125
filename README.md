@@ -16,8 +16,8 @@
   </picture>
 </p>
 
-# TitanPulse
-### Arduino-based tachometer signal system for Honda Fan 125 (2018) using the Titan Blackout dashboard.
+<h1 align="center">TitanPulse</h1>
+<h3 align="center">Arduino-based tachometer signal system for Honda Fan 125 (2018) using the Titan Blackout dashboard.</h3>
 
 <br>
 
