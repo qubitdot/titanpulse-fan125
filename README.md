@@ -66,6 +66,8 @@ flowchart LR
     F --> G[RPM Indicator]
 ```
 
+<br>
+
 ## Objective
 
 The 2018 Honda Fan 125 used in this project does not have a factory tachometer.
@@ -82,6 +84,7 @@ Instead, it answers:
 
 This approach treats the dashboard as a black box that can be calibrated empirically.
 
+<br>
 
 ## Hardware
 
@@ -107,6 +110,7 @@ This approach treats the dashboard as a black box that can be calibrated empiric
 
 The final installation should use soldered and properly insulated connections.
 
+<br>
 
 ## Arduino Pinout
 
@@ -120,6 +124,7 @@ D2 uses an external interrupt to detect signal transitions.
 
 D9 uses the ATmega328P Timer1 to generate the output frequency.
 
+<br>
 
 ## Motorcycle Signal Input
 
@@ -139,6 +144,7 @@ Simplified diagram:
            |
            +-------- GND Arduino Nano
 
+<br>
 
 ## Dashboard Output
 
@@ -165,6 +171,7 @@ At each measurement interval, the Arduino calculates the number of pulses per se
 
 The reading is subsequently filtered to reduce fluctuations.
 
+<br>
 
 ## Why Is There a Calibration Table?
 
@@ -198,6 +205,7 @@ These results demonstrate that it is not safe to assume a simple formula such as
 
 Therefore, the project uses a calibration table.
 
+<br>
 
 ## Calibration Table
 
@@ -219,6 +227,7 @@ In the code:
 
 Each position contains the frequency that should be sent to the dashboard for that RPM range.
 
+<br>
 
 ## How to Calibrate
 
@@ -243,6 +252,8 @@ to be displayed as 4000 RPM by the dashboard, the corresponding table position s
 Then, when the Arduino detects an RPM between 4000 and 4249, it will send 8.20 Hz.
 
 The process is repeated for each range.
+
+<br>
 
 
 ## Table Structure
@@ -270,6 +281,7 @@ For example:
         ↓
     frequency configured for 4000–4249 RPM
 
+<br>
 
 ## Changing the Calibration
 
@@ -296,6 +308,7 @@ There is no requirement for the values to increase uniformly.
 
 The purpose of the table is to empirically reproduce the dashboard's response.
 
+<br>
 
 ## Auditability
 
@@ -312,6 +325,7 @@ This makes it possible to visually verify:
 3. Which frequency will be sent to the dashboard.
 4. Change any individual frequency without modifying the program logic.
 
+<br>
 
 ## Serial Monitor
 
@@ -327,6 +341,7 @@ This makes it possible to simultaneously verify:
 - index of the selected range;
 - frequency sent to the dashboard.
 
+<br>
 
 ## Recommended Calibration Procedure
 
@@ -342,6 +357,7 @@ For each range:
 
 It is recommended to record the results externally during testing before modifying the final calibration table.
 
+<br>
 
 ## Example
 
@@ -365,6 +381,7 @@ The order does not need to be ascending.
 
 If 4000 RPM requires a lower frequency than 3750 RPM, that is acceptable. The dashboard is treated as a black box, and the table reproduces its observed behavior.
 
+<br>
 
 ## Compilation
 
@@ -380,6 +397,7 @@ In the Arduino IDE:
 
 If a Nano with a different bootloader is used, select the corresponding option in the Arduino IDE.
 
+<br>
 
 ## Installation
 
@@ -393,6 +411,7 @@ If a Nano with a different bootloader is used, select the corresponding option i
 8. Calibrate the table.
 9. After calibration, test with the engine running.
 
+<br>
 
 ## Safety
 
@@ -406,6 +425,7 @@ Never connect a signal directly to the Arduino if it may exceed the microcontrol
 
 All connections must be insulated and mechanically protected against vibration, moisture, and short circuits.
 
+<br>
 
 ## Known Limitations
 
@@ -424,6 +444,7 @@ The frequency table is also specific to the combination of:
 
 Therefore, the table values should not be considered a universal specification.
 
+<br>
 
 ## Project Status
 
@@ -433,6 +454,7 @@ The architecture for signal reading, RPM calculation, range selection, and signa
 
 The frequency table is deliberately editable and must be calibrated experimentally to achieve the best possible correspondence between the engine's actual RPM and the dashboard's displayed RPM.
 
+<br>
 
 ## License
 
