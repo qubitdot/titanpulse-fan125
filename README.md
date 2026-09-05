@@ -24,6 +24,7 @@
 <details>
 <summary><strong>Navigation</strong></summary>
 
+- [Download](#download)
 - [Objective](#objective)
 - [Hardware](#hardware)
 - [Arduino Pinout](#arduino-pinout)
@@ -65,6 +66,12 @@ flowchart LR
     E --> F[Titan Blackout Dashboard]
     F --> G[RPM Indicator]
 ```
+
+## Download
+
+The latest release of TitanPulse is available on [GitHub Releases](https://github.com/qubitdot/titanpulse/releases).
+
+Always use the latest **stable** release unless you have a specific reason to use a previous version.
 
 <br>
 
