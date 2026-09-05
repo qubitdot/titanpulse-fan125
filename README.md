@@ -16,7 +16,8 @@
   </picture>
 </p>
 
-# Honda Fan 125 (2018) with Titan Blackout Tachometer
+# TitanPulse
+### Arduino-based tachometer signal system for Honda Fan 125 (2018) using the Titan Blackout dashboard.
 
 Sistema de tacômetro experimental baseado em Arduino Nano para adicionar leitura de RPM a uma Honda Fan 125 2018 utilizando um painel Titan 2023 Blackout aftermarket.
 
