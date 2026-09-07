@@ -163,6 +163,7 @@ D9 is connected to the dashboard's RPM input.
 
 The Arduino GND and dashboard GND must share a common reference.
 
+<br>
 
 ## How RPM Is Calculated
 
